@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name='dodge',
-    version='0.1.1',
+    version='0.1.2',
     description='Create data objects that can be easily converted to and from dicts suitable for use as JSON',
     long_description=read("README"),
     author='Michael Williamson',
