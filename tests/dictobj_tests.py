@@ -141,3 +141,11 @@ def instances_of_data_class_are_not_equal_to_other_types():
     assert not ("bob" == User("bob", "password1"))
     assert User("bob", "password1") != "bob"
     assert "bob" != User("bob", "password1")
+
+
+
+@istest
+def can_convert_data_classes_with_non_string_fields_to_representation():
+    Prime = dodge.data_class("Prime", ["index", "value"])
+    
+    assert_equal("Prime(0, 2)", repr(Prime(0, 2)))

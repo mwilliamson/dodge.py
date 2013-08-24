@@ -112,7 +112,7 @@ def data_class(name, fields):
         
     def __repr__(self):
         values = (getattr(self, field.name) for field in fields)
-        return "{0}({1})".format(name, ", ".join(values))
+        return "{0}({1})".format(name, ", ".join(map(str, values)))
         
     def __str__(self):
         return repr(self)
