@@ -68,6 +68,49 @@ def converting_object_to_dict_preserves_ordering():
     result = dodge.obj_to_dict(user)
     
     assert_equal(["username", "salt", "password", "emailAddress"], result.keys())
+
+
+@istest
+def can_convert_nested_data_classes_to_and_from_dict():
+    Profile = dodge.data_class("Profile", ["bio"])
+    
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("profile", type=Profile),
+    ])
+    
+    user = User("bob", Profile("I'm Bob."))
+    serialised_user = dodge.obj_to_dict(user)
+    unserialised_user = dodge.dict_to_obj(serialised_user, User)
+    assert_equal(user, unserialised_user)
+
+
+@istest
+def can_convert_data_classes_to_and_from_string():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    user = User("bob", "password1")
+    serialised_user = dodge.dumps(user)
+    unserialised_user = dodge.loads(serialised_user, User)
+    
+    expected_user = User("bob", "password1")
+    assert_equal(unserialised_user, expected_user)
+
+
+
+@istest
+def can_convert_nested_data_classes_to_and_from_string():
+    Profile = dodge.data_class("Profile", ["bio"])
+    
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("profile", type=Profile),
+    ])
+    
+    user = User("bob", Profile("I'm Bob."))
+    serialised_user = dodge.dumps(user)
+    unserialised_user = dodge.loads(serialised_user, User)
+    assert_equal(user, unserialised_user)
     
 
 @istest
@@ -98,15 +141,3 @@ def instances_of_data_class_are_not_equal_to_other_types():
     assert not ("bob" == User("bob", "password1"))
     assert User("bob", "password1") != "bob"
     assert "bob" != User("bob", "password1")
-
-
-@istest
-def can_write_then_read_from_file():
-    User = dodge.data_class("User", ["username", "password"])
-    
-    user = User("bob", "password1")
-    serialised_user = dodge.dumps(user)
-    unserialised_user = dodge.loads(serialised_user, User)
-    
-    expected_user = User("bob", "password1")
-    assert_equal(unserialised_user, expected_user)

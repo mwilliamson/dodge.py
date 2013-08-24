@@ -18,19 +18,42 @@ def dict_to_obj(dict_kwargs, cls):
         for key, value in dict_kwargs.iteritems()
     )
     
-    cls_kwargs = dict(
+    fields = dict(
+        (field.name, field)
+        for field in getattr(cls, _fields_attr)
+    )
+    
+    def _read_value(key, value):
+        field = fields[key]
+        if field.type is None:
+            return value
+        else:
+            return dict_to_obj(value, field.type)
+    
+    raw_kwargs = (
         (key, value)
         for key, value in dict_kwargs_without_camel_case.iteritems()
-        if key in getattr(cls, _fields_attr)
+        if key in fields
+    )
+    
+    cls_kwargs = dict(
+        (key, _read_value(key, value))
+        for key, value in raw_kwargs
     )
     
     return cls(**cls_kwargs)
 
 
 def obj_to_dict(obj):
+    def _serialise(value):
+        if hasattr(value, _fields_attr):
+            return obj_to_dict(value)
+        else:
+            return value
+    
     return collections.OrderedDict(
-        (_to_camel_case(key), getattr(obj, key))
-        for key in getattr(obj, _fields_attr)
+        (_to_camel_case(field.name), _serialise(getattr(obj, field.name)))
+        for field in getattr(obj, _fields_attr)
     )
 
 
@@ -55,14 +78,22 @@ _fields_attr = str(uuid.uuid4())
 
 
 def data_class(name, fields):
+    def _to_field(field):
+        if isinstance(field, basestring):
+            return Field(field)
+        else:
+            return field
+    
+    fields = map(_to_field, fields)
+    
     def __init__(self, *args, **kwargs):
-        for field_index, field_name in enumerate(fields):
+        for field_index, field in enumerate(fields):
             if field_index < len(args):
-                setattr(self, field_name, args[field_index])
-            elif field_name in kwargs:
-                setattr(self, field_name, kwargs.pop(field_name))
+                setattr(self, field.name, args[field_index])
+            elif field.name in kwargs:
+                setattr(self, field.name, kwargs.pop(field.name))
             else:
-                raise TypeError("Missing argument: {0}".format(field_name))
+                raise TypeError("Missing argument: {0}".format(field.name))
                 
         for field_name in kwargs.iterkeys():
             raise TypeError("{0}.__init__ does not take keyword argument {1}".format(name, field_name))
@@ -70,8 +101,8 @@ def data_class(name, fields):
     def __eq__(self, other):
         if isinstance(other, new_type):
             return all(
-                getattr(self, field_name) == getattr(other, field_name)
-                for field_name in fields
+                getattr(self, field.name) == getattr(other, field.name)
+                for field in fields
             )
         else:
             return NotImplemented
@@ -80,7 +111,7 @@ def data_class(name, fields):
         return not (self == other)
         
     def __repr__(self):
-        values = (getattr(self, field_name) for field_name in fields)
+        values = (getattr(self, field.name) for field in fields)
         return "{0}({1})".format(name, ", ".join(values))
         
     def __str__(self):
@@ -97,3 +128,12 @@ def data_class(name, fields):
     
     new_type = type(name, (object,), properties)
     return new_type
+
+
+class Field(object):
+    def __init__(self, name, type=None):
+        self.name = name
+        self.type = type
+
+
+field = Field
