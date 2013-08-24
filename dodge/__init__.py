@@ -1,6 +1,15 @@
 import re
 import uuid
 import collections
+import json
+
+
+def dumps(obj):
+    return json.dumps(obj_to_dict(obj))
+
+
+def loads(string, cls):
+    return dict_to_obj(json.loads(string), cls)
 
 
 def dict_to_obj(dict_kwargs, cls):

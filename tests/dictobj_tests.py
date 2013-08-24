@@ -98,3 +98,15 @@ def instances_of_data_class_are_not_equal_to_other_types():
     assert not ("bob" == User("bob", "password1"))
     assert User("bob", "password1") != "bob"
     assert "bob" != User("bob", "password1")
+
+
+@istest
+def can_write_then_read_from_file():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    user = User("bob", "password1")
+    serialised_user = dodge.dumps(user)
+    unserialised_user = dodge.loads(serialised_user, User)
+    
+    expected_user = User("bob", "password1")
+    assert_equal(unserialised_user, expected_user)
