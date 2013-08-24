@@ -1,14 +1,14 @@
 from nose.tools import istest, assert_equal
 
-import dictobj
+import dodge
 
 
 @istest
 def conversion_from_dict_to_obj_uses_items_as_constructor_args():
-    User = dictobj.data_class("User", ["username", "password"])
+    User = dodge.data_class("User", ["username", "password"])
     
     input_dict = {"username": "bob", "password": "password1"}
-    converted_user = dictobj.dict_to_obj(input_dict, User)
+    converted_user = dodge.dict_to_obj(input_dict, User)
     
     expected_user = User("bob", "password1")
     assert_equal(expected_user, converted_user)
@@ -16,10 +16,10 @@ def conversion_from_dict_to_obj_uses_items_as_constructor_args():
 
 @istest
 def arguments_with_camelcase_names_are_converted_to_use_underscores():
-    User = dictobj.data_class("User", ["is_root"])
+    User = dodge.data_class("User", ["is_root"])
     
     input_dict = {"isRoot": True}
-    converted_user = dictobj.dict_to_obj(input_dict, User)
+    converted_user = dodge.dict_to_obj(input_dict, User)
     
     expected_user = User(is_root=True)
     assert_equal(expected_user, converted_user)
@@ -27,10 +27,10 @@ def arguments_with_camelcase_names_are_converted_to_use_underscores():
 
 @istest
 def unrecognised_fields_are_ignored():
-    User = dictobj.data_class("User", ["username"])
+    User = dodge.data_class("User", ["username"])
     
     input_dict = {"username": "bob", "password": "password1"}
-    converted_user = dictobj.dict_to_obj(input_dict, User)
+    converted_user = dodge.dict_to_obj(input_dict, User)
     
     expected_user = User("bob")
     assert_equal(expected_user, converted_user)
@@ -38,10 +38,10 @@ def unrecognised_fields_are_ignored():
 
 @istest
 def conversion_from_obj_to_dict_uses_hacktastic_fields_property():
-    User = dictobj.data_class("User", ["username", "password"])
+    User = dodge.data_class("User", ["username", "password"])
     
     user = User("bob", "password1")
-    result = dictobj.obj_to_dict(user)
+    result = dodge.obj_to_dict(user)
     
     expected_dict = {"username": "bob", "password": "password1"}
     assert_equal(expected_dict, result)
@@ -49,10 +49,10 @@ def conversion_from_obj_to_dict_uses_hacktastic_fields_property():
 
 @istest
 def conversion_from_obj_to_dict_converts_underscores_to_camel_case():
-    User = dictobj.data_class("User", ["is_root"])
+    User = dodge.data_class("User", ["is_root"])
     
     input_user = User(is_root=True)
-    result = dictobj.obj_to_dict(input_user)
+    result = dodge.obj_to_dict(input_user)
     
     expected_dict = {"isRoot": True}
     assert_equal(expected_dict, result)
@@ -60,19 +60,19 @@ def conversion_from_obj_to_dict_converts_underscores_to_camel_case():
 
 @istest
 def converting_object_to_dict_preserves_ordering():
-    User = dictobj.data_class("User", [
+    User = dodge.data_class("User", [
         "username", "salt", "password", "email_address"
     ])
     
     user = User("bob", "!%ksdg", "password1", "bob@example.com")
-    result = dictobj.obj_to_dict(user)
+    result = dodge.obj_to_dict(user)
     
     assert_equal(["username", "salt", "password", "emailAddress"], result.keys())
     
 
 @istest
 def instances_of_data_class_are_equal_iff_all_fields_have_the_same_value():
-    User = dictobj.data_class("User", ["username", "password"])
+    User = dodge.data_class("User", ["username", "password"])
     
     assert User("bob", "password1") == User("bob", "password1")
     assert not (User("jim", "password1") == User("bob", "password1"))
@@ -82,7 +82,7 @@ def instances_of_data_class_are_equal_iff_all_fields_have_the_same_value():
 
 @istest
 def instances_of_data_class_are_not_equal_iff_any_fields_have_different_values():
-    User = dictobj.data_class("User", ["username", "password"])
+    User = dodge.data_class("User", ["username", "password"])
     
     assert not (User("bob", "password1") != User("bob", "password1"))
     assert User("jim", "password1") != User("bob", "password1")
@@ -92,7 +92,7 @@ def instances_of_data_class_are_not_equal_iff_any_fields_have_different_values()
 
 @istest
 def instances_of_data_class_are_not_equal_to_other_types():
-    User = dictobj.data_class("User", ["username", "password"])
+    User = dodge.data_class("User", ["username", "password"])
     
     assert not (User("bob", "password1") == "bob")
     assert not ("bob" == User("bob", "password1"))

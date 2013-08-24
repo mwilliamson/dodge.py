@@ -1,15 +1,15 @@
-# dictobj
+# Dodge
 
-dictobj is a Python library that allows easy creation of data objects.
+Dodge is a Python library that allows easy creation of data objects.
 These data objects can then be converted from and to dictionaries,
 allowing easy JSON serialisation.
 
 ## Example
 
 ```python
-import dictobj
+import dodge
 
-Instrument = dictobj.data_class("Instrument", [
+Instrument = dodge.data_class("Instrument", [
     "name",
     "material",
 ])
@@ -17,8 +17,8 @@ Instrument = dictobj.data_class("Instrument", [
 
 saxophone = Instrument("saxophone", "brass")
 
-serialised_saxophone = dictobj.obj_to_dict(saxophone)
-unserialised_saxophone = dictobj.dict_to_obj(serialised_saxophone)
+serialised_saxophone = dodge.obj_to_dict(saxophone)
+unserialised_saxophone = dodge.dict_to_obj(serialised_saxophone)
 
 print unserialised_saxophone.material # Prints "brass"
 ```
