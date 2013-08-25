@@ -113,17 +113,45 @@ def can_convert_nested_data_classes_to_and_from_string():
     assert_equal(user, unserialised_user)
     
 
-
 @istest
-def can_convert_data_classes_to_and_from_list():
+def can_convert_data_classes_to_and_from_flat_list():
     User = dodge.data_class("User", ["username", "password"])
     
     user = User("bob", "password1")
-    serialised_user = dodge.obj_to_list(user)
-    unserialised_user = dodge.list_to_obj(serialised_user, User)
+    serialised_user = dodge.obj_to_flat_list(user)
+    unserialised_user = dodge.flat_list_to_obj(serialised_user, User)
     
     expected_user = User("bob", "password1")
     assert_equal(unserialised_user, expected_user)
+
+
+@istest
+def can_convert_nested_data_classes_to_and_from_flat_list():
+    Profile = dodge.data_class("Profile", ["bio"])
+    
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("profile", type=Profile),
+    ])
+    
+    user = User("bob", Profile("I'm Bob."))
+    serialised_user = dodge.obj_to_flat_list(user)
+    unserialised_user = dodge.flat_list_to_obj(serialised_user, User)
+    assert_equal(user, unserialised_user)
+
+
+@istest
+def flat_list_for_nested_data_classes_contains_all_field_values_as_flat_list():
+    Profile = dodge.data_class("Profile", ["bio"])
+    
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("profile", type=Profile),
+    ])
+    
+    user = User("bob", Profile("I'm Bob."))
+    
+    assert_equal(["bob", "I'm Bob."], dodge.obj_to_flat_list(user))
 
 
 @istest

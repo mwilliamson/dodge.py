@@ -57,12 +57,35 @@ def obj_to_dict(obj):
     )
     
 
-def obj_to_list(obj):
-    return [getattr(obj, field.name) for field in _fields(obj)]
+def obj_to_flat_list(obj):
+    result = []
+    
+    def _serialise_obj(value):
+        if hasattr(value, _fields_attr):
+            for field in _fields(value):
+                _serialise_obj(getattr(value, field.name))
+        else:
+            result.append(value)
+            
+    _serialise_obj(obj)
+    return result
 
 
-def list_to_obj(list, cls):
-    return cls(*list)
+def flat_list_to_obj(values, cls):
+    values = list(reversed(values))
+    
+    def _unserialise_type(target_type):
+        if target_type is None:
+            return values.pop()
+        else:
+            args = [
+                _unserialise_type(field.type)
+                for field in _fields(target_type)
+            ]
+            return target_type(*args)
+    
+    
+    return _unserialise_type(cls)
 
 
 def _fields(obj):
