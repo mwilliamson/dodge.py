@@ -20,7 +20,7 @@ def dict_to_obj(dict_kwargs, cls):
     
     fields = dict(
         (field.name, field)
-        for field in getattr(cls, _fields_attr)
+        for field in _fields(cls)
     )
     
     def _read_value(key, value):
@@ -53,7 +53,7 @@ def obj_to_dict(obj):
     
     return collections.OrderedDict(
         (_to_camel_case(field.name), _serialise(getattr(obj, field.name)))
-        for field in getattr(obj, _fields_attr)
+        for field in _fields(obj)
     )
     
 
