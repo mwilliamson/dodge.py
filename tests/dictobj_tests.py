@@ -113,6 +113,19 @@ def can_convert_nested_data_classes_to_and_from_string():
     assert_equal(user, unserialised_user)
     
 
+
+@istest
+def can_convert_data_classes_to_and_from_list():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    user = User("bob", "password1")
+    serialised_user = dodge.obj_to_list(user)
+    unserialised_user = dodge.list_to_obj(serialised_user, User)
+    
+    expected_user = User("bob", "password1")
+    assert_equal(unserialised_user, expected_user)
+
+
 @istest
 def instances_of_data_class_are_equal_iff_all_fields_have_the_same_value():
     User = dodge.data_class("User", ["username", "password"])

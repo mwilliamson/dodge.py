@@ -55,6 +55,18 @@ def obj_to_dict(obj):
         (_to_camel_case(field.name), _serialise(getattr(obj, field.name)))
         for field in getattr(obj, _fields_attr)
     )
+    
+
+def obj_to_list(obj):
+    return [getattr(obj, field.name) for field in _fields(obj)]
+
+
+def list_to_obj(list, cls):
+    return cls(*list)
+
+
+def _fields(obj):
+    return getattr(obj, _fields_attr)
 
 
 def _from_camel_case(string):
