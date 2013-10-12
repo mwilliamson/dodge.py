@@ -12,6 +12,7 @@ setup(
     description='Create data objects that can be easily converted to and from dicts suitable for use as JSON',
     long_description=read("README"),
     author='Michael Williamson',
+    author_email='mike@zwobble.org',
     url='http://github.com/mwilliamson/dodge.py',
     keywords="data object serialise serialisation json",
     packages=['dodge'],
