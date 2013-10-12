@@ -2,6 +2,7 @@ import re
 import uuid
 import collections
 import json
+import sys
 
 
 def dumps(obj):
@@ -15,7 +16,7 @@ def loads(string, cls):
 def dict_to_obj(dict_kwargs, cls):
     dict_kwargs_without_camel_case = dict(
         (_from_camel_case(key), value)
-        for key, value in dict_kwargs.iteritems()
+        for key, value in _iteritems(dict_kwargs)
     )
     
     fields = dict(
@@ -32,7 +33,7 @@ def dict_to_obj(dict_kwargs, cls):
     
     raw_kwargs = (
         (key, value)
-        for key, value in dict_kwargs_without_camel_case.iteritems()
+        for key, value in _iteritems(dict_kwargs_without_camel_case)
         if key in fields
     )
     
@@ -106,7 +107,7 @@ def _to_camel_case(value):
             yield lambda s: s.capitalize()
 
     c = camelcase()
-    return "".join(c.next()(x) if x else '_' for x in value.split("_"))
+    return "".join(next(c)(x) if x else '_' for x in value.split("_"))
 
 
 _fields_attr = str(uuid.uuid4())
@@ -119,7 +120,7 @@ def data_class(name, fields):
         else:
             return field
     
-    fields = map(_to_field, fields)
+    fields = [_to_field(field) for field in fields]
     
     def __init__(self, *args, **kwargs):
         for field_index, field in enumerate(fields):
@@ -130,7 +131,7 @@ def data_class(name, fields):
             else:
                 raise TypeError("Missing argument: {0}".format(field.name))
                 
-        for field_name in kwargs.iterkeys():
+        for field_name in kwargs:
             raise TypeError("{0}.__init__ does not take keyword argument {1}".format(name, field_name))
     
     def __eq__(self, other):
@@ -172,3 +173,13 @@ class Field(object):
 
 
 field = Field
+
+
+if sys.version_info[0] == 3:
+    basestring = str
+    
+    def _iteritems(x):
+        return x.items()
+else:
+    def _iteritems(x):
+        return x.iteritems()

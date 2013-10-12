@@ -67,7 +67,7 @@ def converting_object_to_dict_preserves_ordering():
     user = User("bob", "!%ksdg", "password1", "bob@example.com")
     result = dodge.obj_to_dict(user)
     
-    assert_equal(["username", "salt", "password", "emailAddress"], result.keys())
+    assert_equal(["username", "salt", "password", "emailAddress"], list(result.keys()))
 
 
 @istest
