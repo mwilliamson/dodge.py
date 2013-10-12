@@ -2,10 +2,16 @@
 
 import os
 from setuptools import setup
+import sys
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+if sys.version_info[:2] < (2, 7):
+    install_requires = ["ordereddict>=1.1,<2.0"]
+else:
+    install_requires = []
+    
 setup(
     name='dodge',
     version='0.1.4',
@@ -16,4 +22,5 @@ setup(
     url='http://github.com/mwilliamson/dodge.py',
     keywords="data object serialise serialisation json",
     packages=['dodge'],
+    install_requires=install_requires,
 )

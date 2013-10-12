@@ -1,6 +1,9 @@
 import re
 import uuid
-import collections
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 import json
 import sys
 
@@ -52,7 +55,7 @@ def obj_to_dict(obj):
         else:
             return value
     
-    return collections.OrderedDict(
+    return OrderedDict(
         (_to_camel_case(field.name), _serialise(getattr(obj, field.name)))
         for field in _fields(obj)
     )
