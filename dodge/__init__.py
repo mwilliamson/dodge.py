@@ -139,7 +139,7 @@ def data_class(name, fields):
                 raise TypeError("Missing argument: {0}".format(field.name))
                 
         for field_name in kwargs:
-            raise TypeError("{0}.__init__ does not take keyword argument {1}".format(name, field_name))
+            raise TypeError("{0}.__init__ does not take keyword argument '{1}'".format(name, field_name))
     
     def __eq__(self, other):
         if isinstance(other, new_type):

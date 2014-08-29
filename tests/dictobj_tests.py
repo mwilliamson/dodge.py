@@ -21,6 +21,16 @@ def error_if_constructor_has_extra_positional_argument():
 
 
 @istest
+def error_if_constructor_has_extra_keyword_argument():
+    User = dodge.data_class("User", ["username"])
+    try:
+        User("bob", password="password1")
+        assert False, "Expected error"
+    except TypeError as error:
+        assert_equal("User.__init__ does not take keyword argument 'password'", str(error))
+
+
+@istest
 def conversion_from_dict_to_obj_uses_items_as_constructor_args():
     User = dodge.data_class("User", ["username", "password"])
     
