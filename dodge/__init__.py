@@ -126,6 +126,10 @@ def data_class(name, fields):
     fields = [_to_field(field) for field in fields]
     
     def __init__(self, *args, **kwargs):
+        if len(args) > len(fields):
+            raise TypeError("__init__ takes {0} positional argument{1} but {2} were given".format(
+                len(fields) + 1, "s" if len(fields) == 1 else "", len(args) + 1))
+        
         for field_index, field in enumerate(fields):
             if field_index < len(args):
                 setattr(self, field.name, args[field_index])
