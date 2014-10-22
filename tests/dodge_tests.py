@@ -33,7 +33,7 @@ def error_if_constructor_has_extra_keyword_argument():
 @istest
 def class_module_is_not_dodge():
     User = dodge.data_class("User", [])
-    assert_equal("dictobj_tests", User.__module__)
+    assert_equal("dodge_tests", User.__module__)
 
 
 @istest
