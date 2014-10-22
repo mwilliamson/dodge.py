@@ -170,6 +170,11 @@ def data_class(name, fields):
     }
     
     new_type = type(name, (object,), properties)
+    try:
+        new_type.__module__ = sys._getframe(1).f_globals.get('__name__', '__main__')
+    except (AttributeError, ValueError):
+        pass
+    
     return new_type
 
 

@@ -31,6 +31,12 @@ def error_if_constructor_has_extra_keyword_argument():
 
 
 @istest
+def class_module_is_not_dodge():
+    User = dodge.data_class("User", [])
+    assert_equal("dictobj_tests", User.__module__)
+
+
+@istest
 def conversion_from_dict_to_obj_uses_items_as_constructor_args():
     User = dodge.data_class("User", ["username", "password"])
     
