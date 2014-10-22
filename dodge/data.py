@@ -10,13 +10,8 @@ _fields_attr = str(uuid.uuid4())
 
 
 def data_class(name, fields):
-    def _to_field(field):
-        if isinstance(field, basestring):
-            return Field(field)
-        else:
-            return field
-    
     fields = [_to_field(field) for field in fields]
+    _check_for_duplicate_fields(fields)
     
     def __init__(self, *args, **kwargs):
         for field_index, field in enumerate(fields):
@@ -65,6 +60,22 @@ def data_class(name, fields):
         pass
     
     return new_type
+
+
+def _to_field(field):
+    if isinstance(field, basestring):
+        return Field(field)
+    else:
+        return field
+
+
+def _check_for_duplicate_fields(fields):
+    seen = set()
+    for field in fields:
+        if field.name in seen:
+            raise ValueError("duplicate field name: '{0}'".format(field.name))
+        
+        seen.add(field.name)
 
 
 class Field(object):
