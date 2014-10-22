@@ -37,6 +37,16 @@ def class_module_is_not_dodge():
 
 
 @istest
+def data_class_arguments_can_be_passed_by_position_and_keyword():
+    User = dodge.data_class("User", ["username", "salt", "password"])
+    
+    user = User("bob", "asf", password="password1")
+    assert_equal("bob", user.username)
+    assert_equal("password1", user.password)
+    assert_equal("asf", user.salt)
+
+
+@istest
 def instances_of_data_class_are_equal_iff_all_fields_have_the_same_value():
     User = dodge.data_class("User", ["username", "password"])
     
