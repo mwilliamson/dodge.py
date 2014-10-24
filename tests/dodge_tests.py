@@ -121,7 +121,7 @@ def field_is_shown_if_it_has_default_value():
     ])
     
     user = User("bob")
-    assert_equal("User(bob, password1)", repr(user))
+    assert_equal("User('bob', 'password1')", repr(user))
 
 
 @istest
@@ -132,7 +132,7 @@ def field_can_be_configured_to_be_hidden_in_repr_if_it_has_default_value():
     ])
     
     user = User("bob")
-    assert_equal("User(bob)", repr(user))
+    assert_equal("User('bob')", repr(user))
 
 
 @istest

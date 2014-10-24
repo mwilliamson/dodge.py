@@ -50,7 +50,7 @@ def data_class(name, fields):
             for field in fields
             if field.show_default or field.default != getattr(self, field.name)
         )
-        return "{0}({1})".format(name, ", ".join(map(str, values)))
+        return "{0}({1})".format(name, ", ".join(map(repr, values)))
         
     def __str__(self):
         return repr(self)
