@@ -87,5 +87,13 @@ class Field(object):
 field = Field
 
 
+def copy(obj):
+    args = [
+        getattr(obj, field.name)
+        for field in _fields(obj)
+    ]
+    return type(obj)(*args)
+
+
 if sys.version_info[0] >= 3:
     basestring = str

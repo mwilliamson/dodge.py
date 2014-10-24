@@ -89,3 +89,14 @@ def error_is_raised_if_fields_have_duplicate_names():
         ValueError, "^duplicate field name: 'username'$",
         lambda: dodge.data_class("User", ["username", "username"])
     )
+
+
+@istest
+def copying_data_class_creates_distinct_object_with_same_field_values():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    original = User("bob", "password1")
+    copy = dodge.copy(original)
+    
+    assert original is not copy
+    assert_equal("bob", copy.username)
