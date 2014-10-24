@@ -17,19 +17,20 @@ def data_class(name, fields):
         for field in fields
         if field.has_default
     )
+    positional_argument_length = _find_first_keyword_argument_index(fields)
     
     def __init__(self, *args, **kwargs):
-        if len(args) > len(fields):
+        if len(args) > positional_argument_length:
             raise TypeError(
                 "{0}.__init__ takes {1} positional argument{2} but {3} {4} given".format(
                     name,
-                    len(fields),
-                    "" if len(fields) == 1 else "s",
+                    positional_argument_length,
+                    "" if positional_argument_length == 1 else "s",
                     len(args),
                     "was" if len(args) == 1 else "were"))
         
         for field_index, field in enumerate(fields):
-            if field_index < len(args):
+            if field_index < len(args) and not field.keyword_only:
                 setattr(self, field.name, args[field_index])
             elif field.name in kwargs:
                 setattr(self, field.name, kwargs.pop(field.name))
@@ -104,6 +105,14 @@ def _to_field(data_field):
         return data_field
 
 
+def _find_first_keyword_argument_index(fields):
+    for index, field in enumerate(fields):
+        if field.keyword_only:
+            return index
+    
+    return len(fields)
+
+
 def _repr_value(field, value):
     if not field.show_default and field.default == value:
         return None
@@ -116,24 +125,26 @@ def _repr_value(field, value):
 
 
 class _Field(object):
-    def __init__(self, name, type, default, has_default, show_default):
+    def __init__(self, name, type, default, has_default, show_default, keyword_only):
         self.name = name
         self.type = type
         self.default = default
         self.has_default = has_default
         self.show_default = show_default
-        self.is_kwarg = has_default
+        self.is_kwarg = has_default or keyword_only
+        self.keyword_only = keyword_only
 
 
 _undefined = object()
 
-def field(name, type=None, default=_undefined, show_default=True):
+def field(name, type=None, default=_undefined, show_default=True, keyword_only=False):
     return _Field(
         name=name,
         type=type,
         default=default,
         has_default=default is not _undefined,
         show_default=show_default,
+        keyword_only=keyword_only,
     )
 
 

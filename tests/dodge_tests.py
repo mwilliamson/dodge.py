@@ -148,6 +148,17 @@ def field_with_default_is_shown_as_kwarg():
 
 
 @istest
+def keyword_only_field_is_shown_as_kwarg():
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("password", keyword_only=True)
+    ])
+    
+    user = User("bob", password="password1")
+    assert_equal("User('bob', password='password1')", repr(user))
+
+
+@istest
 def field_value_is_shown_if_it_has_default_value():
     User = dodge.data_class("User", [
         "username",
@@ -167,6 +178,19 @@ def field_can_be_configured_to_be_hidden_in_repr_if_it_has_default_value():
     
     user = User("bob")
     assert_equal("User('bob')", repr(user))
+
+
+@istest
+def error_is_raised_if_kwarg_field_is_passed_as_positional_arg():
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("password", keyword_only=True)
+    ])
+    
+    assert_raises_regexp(
+        TypeError, "takes 1 positional argument but 2 were given",
+        lambda: User("bob", "password2")
+    )
 
 
 @istest
