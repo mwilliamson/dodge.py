@@ -100,3 +100,24 @@ def copying_data_class_creates_distinct_object_with_same_field_values():
     
     assert original is not copy
     assert_equal("bob", copy.username)
+
+
+@istest
+def field_is_set_to_default_if_value_not_provided():
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("password", default="password1")
+    ])
+    
+    user = User("bob")
+    assert_equal("password1", user.password)
+
+
+@istest
+def error_is_raised_if_init_value_is_missing():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    assert_raises_regexp(
+        TypeError, "^Missing argument: password$",
+        lambda: User("bob")
+    )

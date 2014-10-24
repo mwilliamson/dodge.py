@@ -12,6 +12,11 @@ _fields_attr = str(uuid.uuid4())
 def data_class(name, fields):
     fields = [_to_field(field) for field in fields]
     _check_for_duplicate_fields(fields)
+    defaults = dict(
+        (field.name, field.default)
+        for field in fields
+        if field.has_default
+    )
     
     def __init__(self, *args, **kwargs):
         for field_index, field in enumerate(fields):
@@ -19,6 +24,8 @@ def data_class(name, fields):
                 setattr(self, field.name, args[field_index])
             elif field.name in kwargs:
                 setattr(self, field.name, kwargs.pop(field.name))
+            elif field.name in defaults:
+                setattr(self, field.name, defaults[field.name])
             else:
                 raise TypeError("Missing argument: {0}".format(field.name))
                 
@@ -78,13 +85,25 @@ def _check_for_duplicate_fields(fields):
         seen.add(field.name)
 
 
-class Field(object):
-    def __init__(self, name, type=None):
+def _to_field(data_field):
+    if isinstance(data_field, basestring):
+        return field(data_field)
+    else:
+        return data_field
+
+
+class _Field(object):
+    def __init__(self, name, type, default, has_default):
         self.name = name
         self.type = type
+        self.default = default
+        self.has_default = has_default
 
 
-field = Field
+_undefined = object()
+
+def field(name, type=None, default=_undefined):
+    return _Field(name, type, default, default is not _undefined)
 
 
 def copy(obj):
