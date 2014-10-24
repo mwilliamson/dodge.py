@@ -209,6 +209,6 @@ if sys.version_info[:2] <= (2, 6):
             func()
             assert False, "Expected {0}".format(cls)
         except cls as error:
-            assert re.match(regex, str(error))
+            assert re.search(regex, str(error)), "{0} does not match {1}".format(str(error), regex)
 else:
     from nose.tools import assert_raises_regexp
