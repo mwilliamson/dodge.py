@@ -19,6 +19,15 @@ def data_class(name, fields):
     )
     
     def __init__(self, *args, **kwargs):
+        if len(args) > len(fields):
+            raise TypeError(
+                "{0}.__init__ takes {1} positional argument{2} but {3} {4} given".format(
+                    name,
+                    len(fields),
+                    "" if len(fields) == 1 else "s",
+                    len(args),
+                    "was" if len(args) == 1 else "were"))
+        
         for field_index, field in enumerate(fields):
             if field_index < len(args):
                 setattr(self, field.name, args[field_index])
@@ -70,7 +79,7 @@ def data_class(name, fields):
         pass
     
     return new_type
-
+    
 
 def _to_field(field):
     if isinstance(field, basestring):

@@ -179,6 +179,28 @@ def error_is_raised_if_init_value_is_missing():
     )
 
 
+@istest
+def error_is_raised_if_too_many_positional_arguments_are_passed_to_init():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    assert_raises_regexp(
+        TypeError, r"takes 2 positional arguments but 3 were given",
+        lambda: User("bob", "password1", "salty")
+    )
+
+
+@istest
+def error_of_number_of_positional_arguments_uses_correct_singular_wording():
+    assert_raises_regexp(
+        TypeError, r"takes 1 positional argument but 2 were given",
+        lambda: dodge.data_class("User", ["username"])("bob", "password1")
+    )
+    assert_raises_regexp(
+        TypeError, r"takes 0 positional arguments but 1 was given",
+        lambda: dodge.data_class("User", [])("bob")
+    )
+
+
 import sys
 if sys.version_info[:2] <= (2, 6):
     import re
