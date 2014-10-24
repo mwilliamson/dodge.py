@@ -45,7 +45,11 @@ def data_class(name, fields):
         return not (self == other)
         
     def __repr__(self):
-        values = (getattr(self, field.name) for field in fields)
+        values = (
+            getattr(self, field.name)
+            for field in fields
+            if field.show_default or field.default != getattr(self, field.name)
+        )
         return "{0}({1})".format(name, ", ".join(map(str, values)))
         
     def __str__(self):
@@ -93,17 +97,24 @@ def _to_field(data_field):
 
 
 class _Field(object):
-    def __init__(self, name, type, default, has_default):
+    def __init__(self, name, type, default, has_default, show_default):
         self.name = name
         self.type = type
         self.default = default
         self.has_default = has_default
+        self.show_default = show_default
 
 
 _undefined = object()
 
-def field(name, type=None, default=_undefined):
-    return _Field(name, type, default, default is not _undefined)
+def field(name, type=None, default=_undefined, show_default=True):
+    return _Field(
+        name=name,
+        type=type,
+        default=default,
+        has_default=default is not _undefined,
+        show_default=show_default,
+    )
 
 
 def copy(obj):

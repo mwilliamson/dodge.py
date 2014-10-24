@@ -114,6 +114,28 @@ def field_is_set_to_default_if_value_not_provided():
 
 
 @istest
+def field_is_shown_if_it_has_default_value():
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("password", default="password1")
+    ])
+    
+    user = User("bob")
+    assert_equal("User(bob, password1)", repr(user))
+
+
+@istest
+def field_can_be_configured_to_be_hidden_in_repr_if_it_has_default_value():
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("password", default="password1", show_default=False)
+    ])
+    
+    user = User("bob")
+    assert_equal("User(bob)", repr(user))
+
+
+@istest
 def error_is_raised_if_init_value_is_missing():
     User = dodge.data_class("User", ["username", "password"])
     
