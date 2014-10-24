@@ -117,12 +117,13 @@ def field(name, type=None, default=_undefined, show_default=True):
     )
 
 
-def copy(obj):
-    args = [
-        getattr(obj, field.name)
+def copy(obj, **kwargs):
+    field_values = dict(
+        (field.name, getattr(obj, field.name))
         for field in _fields(obj)
-    ]
-    return type(obj)(*args)
+    )
+    field_values.update(kwargs)
+    return type(obj)(**field_values)
 
 
 if sys.version_info[0] >= 3:

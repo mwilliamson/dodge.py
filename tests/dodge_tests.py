@@ -103,6 +103,29 @@ def copying_data_class_creates_distinct_object_with_same_field_values():
 
 
 @istest
+def copy_of_data_object_has_values_changed_to_copy_kwargs():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    original = User("bob", "password1")
+    copy = dodge.copy(original, password="password2")
+    
+    assert original is not copy
+    assert_equal("password1", original.password)
+    assert_equal("password2", copy.password)
+
+
+@istest
+def error_is_raised_if_copy_kwarg_is_not_field():
+    User = dodge.data_class("User", ["username", "password"])
+    
+    original = User("bob", "password1")
+    assert_raises_regexp(
+        TypeError, "__init__ does not take keyword argument",
+        lambda: dodge.copy(original, salt="salty")
+    )
+
+
+@istest
 def field_is_set_to_default_if_value_not_provided():
     User = dodge.data_class("User", [
         "username",
