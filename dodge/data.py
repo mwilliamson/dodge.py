@@ -46,11 +46,10 @@ def data_class(name, fields):
         
     def __repr__(self):
         values = (
-            getattr(self, field.name)
+            _repr_value(field, getattr(self, field.name))
             for field in fields
-            if field.show_default or field.default != getattr(self, field.name)
         )
-        return "{0}({1})".format(name, ", ".join(map(repr, values)))
+        return "{0}({1})".format(name, ", ".join(filter(None, values)))
         
     def __str__(self):
         return repr(self)
@@ -96,6 +95,17 @@ def _to_field(data_field):
         return data_field
 
 
+def _repr_value(field, value):
+    if not field.show_default and field.default == value:
+        return None
+    else:
+        repr_value = repr(value)
+        if field.is_kwarg:
+            return "{0}={1}".format(field.name, repr_value)
+        else:
+            return repr_value 
+
+
 class _Field(object):
     def __init__(self, name, type, default, has_default, show_default):
         self.name = name
@@ -103,6 +113,7 @@ class _Field(object):
         self.default = default
         self.has_default = has_default
         self.show_default = show_default
+        self.is_kwarg = has_default
 
 
 _undefined = object()

@@ -137,14 +137,25 @@ def field_is_set_to_default_if_value_not_provided():
 
 
 @istest
-def field_is_shown_if_it_has_default_value():
+def field_with_default_is_shown_as_kwarg():
+    User = dodge.data_class("User", [
+        "username",
+        dodge.field("password", default="password1")
+    ])
+    
+    user = User("bob", "password2")
+    assert_equal("User('bob', password='password2')", repr(user))
+
+
+@istest
+def field_value_is_shown_if_it_has_default_value():
     User = dodge.data_class("User", [
         "username",
         dodge.field("password", default="password1")
     ])
     
     user = User("bob")
-    assert_equal("User('bob', 'password1')", repr(user))
+    assert_equal("User('bob', password='password1')", repr(user))
 
 
 @istest
