@@ -1,4 +1,4 @@
-from nose.tools import istest, assert_equal, assert_raises_regexp
+from nose.tools import istest, assert_equal
 
 import dodge
 
@@ -143,3 +143,16 @@ def error_is_raised_if_init_value_is_missing():
         TypeError, "^Missing argument: password$",
         lambda: User("bob")
     )
+
+
+import sys
+if sys.version_info[:2] <= (2, 6):
+    import re
+    def assert_raises_regexp(cls, regex, func):
+        try:
+            func()
+            assert False, "Expected {0}".format(cls)
+        except cls as error:
+            assert re.match(regex, str(error))
+else:
+    from nose.tools import assert_raises_regexp
