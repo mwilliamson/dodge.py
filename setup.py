@@ -14,7 +14,7 @@ else:
     
 setup(
     name='dodge',
-    version='0.1.6',
+    version='0.1.7',
     description='Create data objects that can be easily converted to and from dicts suitable for use as JSON',
     long_description=read("README.rst"),
     author='Michael Williamson',
