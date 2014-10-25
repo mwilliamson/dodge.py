@@ -4,33 +4,6 @@ import dodge
 
 
 @istest
-def error_if_constructor_has_extra_positional_argument():
-    User = dodge.data_class("User", ["username"])
-    try:
-        User("bob", "password1")
-        assert False, "Expected error"
-    except TypeError as error:
-        assert_equal("__init__ takes 2 positional arguments but 3 were given", str(error))
-        
-    Unit = dodge.data_class("Unit", [])
-    try:
-        Unit("bob")
-        assert False, "Expected error"
-    except TypeError as error:
-        assert_equal("__init__ takes 1 positional argument but 2 were given", str(error))
-
-
-@istest
-def error_if_constructor_has_extra_keyword_argument():
-    User = dodge.data_class("User", ["username"])
-    try:
-        User("bob", password="password1")
-        assert False, "Expected error"
-    except TypeError as error:
-        assert_equal("User.__init__ does not take keyword argument 'password'", str(error))
-
-
-@istest
 def class_module_is_not_dodge():
     User = dodge.data_class("User", [])
     assert_equal("dodge_tests", User.__module__)
@@ -222,6 +195,14 @@ def error_of_number_of_positional_arguments_uses_correct_singular_wording():
     assert_raises_regexp(
         TypeError, r"takes 0 positional arguments but 1 was given",
         lambda: dodge.data_class("User", [])("bob")
+    )
+
+
+@istest
+def error_if_constructor_has_extra_keyword_argument():
+    assert_raises_regexp(
+        TypeError, r"does not take keyword argument username",
+        lambda: dodge.data_class("User", [])(username="bob")
     )
 
 
