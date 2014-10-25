@@ -171,7 +171,7 @@ def error_is_raised_if_init_value_is_missing():
     User = dodge.data_class("User", ["username", "password"])
     
     assert_raises_regexp(
-        TypeError, "^Missing argument: password$",
+        TypeError, "^Missing argument: 'password'$",
         lambda: User("bob")
     )
 
@@ -201,7 +201,7 @@ def error_of_number_of_positional_arguments_uses_correct_singular_wording():
 @istest
 def error_if_constructor_has_extra_keyword_argument():
     assert_raises_regexp(
-        TypeError, r"does not take keyword argument username",
+        TypeError, r"does not take keyword argument 'username'",
         lambda: dodge.data_class("User", [])(username="bob")
     )
 
