@@ -2,7 +2,7 @@ import uuid
 import sys
 
 
-def _fields(obj):
+def fields(obj):
     return getattr(obj, _fields_attr)
 
 
@@ -151,7 +151,7 @@ def field(name, type=None, default=_undefined, show_default=True, keyword_only=F
 def copy(obj, **kwargs):
     field_values = dict(
         (field.name, getattr(obj, field.name))
-        for field in _fields(obj)
+        for field in fields(obj)
     )
     field_values.update(kwargs)
     return type(obj)(**field_values)

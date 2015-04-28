@@ -1,4 +1,4 @@
-from .data import data_class, field, copy
+from .data import data_class, field, copy, fields
 from .conversion import (
     dumps, loads,
     dict_to_obj, obj_to_dict,

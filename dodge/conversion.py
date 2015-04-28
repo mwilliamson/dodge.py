@@ -6,7 +6,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
-from .data import _fields_attr, _fields
+from .data import _fields_attr, fields as _fields
 
 
 def _from_camel_case(string):

@@ -20,6 +20,15 @@ def data_class_arguments_can_be_passed_by_position_and_keyword():
 
 
 @istest
+def fields_of_instance_can_be_retrieved():
+    User = dodge.data_class("User", ["username"])
+    
+    user = User("bob")
+    field, = dodge.fields(user)
+    assert_equal("username", field.name)
+
+
+@istest
 def instances_of_data_class_are_equal_iff_all_fields_have_the_same_value():
     User = dodge.data_class("User", ["username", "password"])
     
