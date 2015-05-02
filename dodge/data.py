@@ -9,7 +9,10 @@ def fields(obj):
 _fields_attr = str(uuid.uuid4())
 
 
-def data_class(name, fields):
+def data_class(name, fields, bases=None):
+    if bases is None:
+        bases = (object,)
+    
     fields = [_to_field(field) for field in fields]
     _check_for_duplicate_fields(fields)
     defaults = dict(
@@ -20,6 +23,8 @@ def data_class(name, fields):
     positional_argument_length = _find_first_keyword_argument_index(fields)
     
     def __init__(self, *args, **kwargs):
+        super(new_type, self).__init__()
+        
         if len(args) > positional_argument_length:
             raise TypeError(
                 "{0}.__init__ takes {1} positional argument{2} but {3} {4} given".format(
@@ -73,7 +78,7 @@ def data_class(name, fields):
         _fields_attr: fields,
     }
     
-    new_type = type(name, (object,), properties)
+    new_type = type(name, bases, properties)
     try:
         new_type.__module__ = sys._getframe(1).f_globals.get('__name__', '__main__')
     except (AttributeError, ValueError):

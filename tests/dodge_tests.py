@@ -215,6 +215,19 @@ def error_if_constructor_has_extra_keyword_argument():
     )
 
 
+@istest
+def super_init_is_called_if_super_class_is_specified():
+    class HasId(object):
+        def __init__(self):
+            self.id = 42
+    
+    User = dodge.data_class("User", ["username"], bases=(HasId,))
+    
+    user = User("bob")
+    assert isinstance(user, HasId)
+    assert_equal(42, user.id)
+
+
 import sys
 if sys.version_info[:2] <= (2, 6):
     import re
